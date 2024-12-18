@@ -79,6 +79,7 @@ int main() {
     InitAudioDevice();
     SetMasterVolume(35.0f);
     SetTargetFPS(60);
+    resetGame();
 
     // variables
     Rectangle border = {borderMargin.x, borderMargin.y, windowSize.x - (borderMargin.x*2), windowSize.y - (borderMargin.y*2)};
@@ -89,11 +90,10 @@ int main() {
     Vector2 borderBottom[] = {{borderMargin.x, windowSize.y - borderMargin.y}, {windowSize.x - borderMargin.x, windowSize.y - borderMargin.y}};
     Vector2 centerBarrier[] = {{windowSize.x / 2, borderMargin.y}, {windowSize.x / 2, (windowSize.y) - borderMargin.y}};
 
-    resetGame();
     timeOfReset = GetTime();
 
     hitSound = LoadSound("../audio/hit.wav");
-    scoreSound = LoadSound("/home/ian/Projects/pong/audio/score.wav");
+    scoreSound = LoadSound("../audio/score.wav");
     gameEndSound = LoadSound("../audio/game_end.wav");
 
     // game loop
@@ -114,9 +114,6 @@ int main() {
         DrawLineEx(borderTop[0], borderTop[1], 1.0f, WHITE);
         DrawLineEx(borderBottom[0], borderBottom[1], 1.0f, WHITE);
         DrawLineEx(centerBarrier[0], centerBarrier[1], 1.0f, WHITE);
-
-        // DrawRectangleLinesEx(leftBorder, 3.0, BLUE);
-        // DrawRectangleLinesEx(rightBorder, 3.0, RED);
 
         // updates
         if (!isGameOver) {
@@ -276,8 +273,6 @@ void updateBall(Rectangle bounds, Rectangle leftRec, Rectangle rightRec) {
     // BORDER COLLISION
     if (!CheckCollisionPointRec(top, bounds) || !CheckCollisionPointRec(bottom, bounds))
         ballVelocity.y *= -1.0;
-    // else if (!CheckCollisionPointRec(left, bounds) || !CheckCollisionPointRec(right, bounds))
-    //     ballVelocity.x *= -1.0;
 
     // LEFT PADDLE COLLISION
     if (CheckCollisionCircleRec(ballPos, ballRadius, leftRec) && !isBallCollidingLeft) {
@@ -347,19 +342,6 @@ bool updateScore(Rectangle bounds) {
     return false;
 }
 
-void drawScore() {
-    sprintf(scoreStr, "%02d - %02d", leftScore, rightScore);
-    int x = (windowSize.x / 2) - (((float)MeasureText(scoreStr, fontSize)) / 2);
-    int y = 0;
-    DrawText(scoreStr, x, y, fontSize, WHITE);
-}
-
-void drawTitle() {
-    int x = (windowSize.x / 2) - ((float)MeasureText(title, fontSize) / 2);
-    int y = windowSize.y - borderMargin.y;
-    DrawText(title, x, y, fontSize, WHITE);
-}
-
 void resetBall() {
     srand(time(NULL));
     int xVal = rand() % 2 == 0 ? 1 : -1;
@@ -389,6 +371,19 @@ void resetGame() {
     resetPaddles();
     resetScore();
     playedEndSound = false;
+}
+
+void drawScore() {
+    sprintf(scoreStr, "%02d - %02d", leftScore, rightScore);
+    int x = (windowSize.x / 2) - (((float)MeasureText(scoreStr, fontSize)) / 2);
+    int y = 0;
+    DrawText(scoreStr, x, y, fontSize, WHITE);
+}
+
+void drawTitle() {
+    int x = (windowSize.x / 2) - ((float)MeasureText(title, fontSize) / 2);
+    int y = windowSize.y - borderMargin.y;
+    DrawText(title, x, y, fontSize, WHITE);
 }
 
 void drawWinnerText(char* winner) {
